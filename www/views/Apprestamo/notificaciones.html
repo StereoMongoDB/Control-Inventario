@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones</title>
+    <script src="../../public/js/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/bootstrap-icons/font/bootstrap-icons.css">
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.notification {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: #fafafa;
+}
+
+.field {
+    margin-bottom: 10px;
+}
+
+.field strong {
+    display: inline-block;
+    width: 100px;
+    color: #555;
+}
+
+.field span {
+    color: #333;
+}
+
+</style>
+<body>
+    <div class="container">
+        <h1>Notificaciones</h1>
+        <div id="notification" class="notification">
+
+        </div>
+    </div>
+    
+</body> 
+<script src="../../controllers/routes.js"></script>
+<script src="../../public/js/index.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<script>
+    loadAvisos2();
+</script>
+</html>

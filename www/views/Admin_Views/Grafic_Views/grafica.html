@@ -1,0 +1,146 @@
+<style>
+  #toolsChart {
+    width: 100%;
+    height: 400px;
+    /* Ajusta el alto según lo necesites */
+  }
+
+  .filters {
+    margin-bottom: 20px;
+  }
+
+  .filters label {
+    margin-right: 10px;
+  }
+
+  .day-names {
+    margin-top: 20px;
+    font-weight: bold;
+  }
+
+  .modal-content {
+    position: relative;
+  }
+
+  .close {
+    color: #aaa;
+    position: absolute;
+    top: 20px;
+    /* Ajusta la posición vertical según el título */
+    right: 20px;
+    /* Ajusta la posición horizontal para estar en la esquina */
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+</style>
+<h2>Solicitudes</h2>
+<label for="Solicitudes">Solicitudes realizadas</label>
+<div class="filters">
+  <label for="startDate">Desde:</label>
+  <input type="date" id="startDate">
+  <label for="endDate">Hasta:</label>
+  <input type="date" id="endDate">
+  <button id="applyFilters">Aplicar Filtros</button>
+</div>
+<canvas id="toolsChart"></canvas>
+<div id="dayNames" class="day-names"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  var toolsChart;
+
+  function isValidDate(date) {
+    return date instanceof Date && !isNaN(date);
+  }
+
+  function createToolsChart(data) {
+    const canvas = document.getElementById('toolsChart');
+    const ctx = canvas.getContext('2d');
+
+    const chartData = {
+      labels: data.map(item => item.date),
+      datasets: [{
+        label: 'Solicitudes por Día',
+        data: data.map(item => item.count),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    };
+
+    if (toolsChart) {
+      toolsChart.destroy();
+    }
+
+    toolsChart = new Chart(ctx, {
+      type: 'bar',
+      data: chartData
+    });
+  }
+
+  function loadRequests(startDate, endDate) {
+    $.ajax({
+      url: VerSolicitud_route,
+      method: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        console.log('Datos recibidos:', data);
+
+        var filteredData = data.filter(request => {
+          var hEntrada = new Date(request.Hora_de_entrada);
+          return isValidDate(hEntrada) && hEntrada >= startDate && hEntrada <= endDate;
+        });
+
+        var chartData = [];
+        filteredData.forEach(request => {
+          var date = new Date(request.Hora_de_entrada).toISOString().split('T')[0];
+          var existing = chartData.find(item => item.date === date);
+          if (existing) {
+            existing.count++;
+          } else {
+            chartData.push({ date: date, count: 1 });
+          }
+        });
+
+        // Ensure chartData includes all dates within the range, even if count is 0
+        for (var d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+          var dateStr = d.toISOString().split('T')[0];
+          if (!chartData.find(item => item.date === dateStr)) {
+            chartData.push({ date: dateStr, count: 0 });
+          }
+        }
+
+        // Sort chartData by date
+        chartData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        createToolsChart(chartData);
+      },
+      error: function(error) {
+        console.error('Error obteniendo los datos:', error);
+      }
+    });
+  }
+
+  function aplicarFiltros() {
+    var startDate = new Date(document.getElementById('startDate').value);
+    var endDate = new Date(document.getElementById('endDate').value);
+
+    if (isValidDate(startDate) && isValidDate(endDate)) {
+      loadRequests(startDate, endDate);
+    } else {
+      alert('Por favor, selecciona un rango de fechas válido.');
+    }
+  }
+
+  document.getElementById('applyFilters').addEventListener('click', aplicarFiltros);
+
+  // Cargar las solicitudes y generar la gráfica para el día actual al cargar la página
+  var today = new Date();
+  loadRequests(today, today);
+</script>

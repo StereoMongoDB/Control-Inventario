@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Solicitud</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../public/css/index.css">
+    <link rel="stylesheet" href="../../public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="../../../www/public/js/jquery/dist/jquery.min.js"></script>
+    <script src="../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="RequestAdd">
+    <div class="container">
+        <h2>Formulario de Solicitud</h2>
+        <form>
+            <div class="form-group">
+                <label for="id_solicitud">ID de Solicitud</label>
+                <input type="text" class="form-control" id="id_solicitud">
+            </div>
+            <div class="form-group">
+                <label for="usuario">Usuario</label>
+                <input type="text" class="form-control" id="usuario">
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" class="form-control" id="fecha">
+            </div>
+            <div class="form-group">
+                <label for="carrera">Carrera</label>
+                <input type="text" class="form-control" id="carrera">
+            </div>
+            <div class="form-group">
+                <label for="taller">Taller</label>
+                <input type="text" class="form-control" id="taller">
+            </div>
+            <div class="form-group">
+                <label for="asignatura">Nombre de Asignatura</label>
+                <input type="text" class="form-control" id="asignatura">
+            </div>
+            <div class="form-group">
+                <label for="grupo">Grupo</label>
+                <input type="text" class="form-control" id="grupo">
+            </div>
+            <div class="form-group">
+                <label for="hora_salida">Hora de Salida</label>
+                <input type="time" class="form-control" id="hora_salida">
+            </div>
+            <div class="form-group">
+                <label for="hora_entrada">Hora de Entrada</label>
+                <input type="time" class="form-control" id="hora_entrada">
+            </div>
+            <div class="form-group">
+                <label for="cantidad">Cantidad</label>
+                <input type="number" class="form-control" id="cantidad">
+            </div>
+            <div class="form-group">
+                <label for="descripcion">Descripción de Compromiso</label>
+                <textarea class="form-control" id="descripcion" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="fecha_cumplimiento">Fecha de Cumplimiento</label>
+                <input type="date" class="form-control" id="fecha_cumplimiento">
+            </div>
+            <div class="form-group">
+                <label for="recibo">Recibo de Conformidad (Imagen)</label>
+                <input type="file" class="form-control-file" id="recibo">
+                <small id="reciboHelp" class="form-text text-muted">Sube una imagen del recibo de conformidad.</small>
+                <div class="mt-2">
+                    <img src="#" alt="Vista previa del recibo" id="reciboPreview" style="max-width: 200px; max-height: 200px;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="coordinador_firma">Firma del Coordinador (Imagen)</label>
+                <input type="file" class="form-control-file" id="coordinador_firma">
+                <small id="firmaHelp" class="form-text text-muted">Sube una imagen de la firma del coordinador.</small>
+                <div class="signature">
+                    <img src="#" alt="Vista previa de la firma" id="firmaPreview" style="max-width: 200px; max-height: 200px;">
+                </div>
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+                <button type="button" class="btn btn-danger" onclick="window.location.href='../../../admin.html'">Volver</button>
+            </div>
+        </form>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Previsualización de imágenes
+        document.getElementById('recibo').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('reciboPreview').setAttribute('src', e.target.result);
+            }
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('coordinador_firma').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('firmaPreview').setAttribute('src', e.target.result);
+            }
+            reader.readAsDataURL(file);
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="../../../www/public/js/index.js"></script>
+    <script src="cordova.js"></script>
+</body>
+</html>

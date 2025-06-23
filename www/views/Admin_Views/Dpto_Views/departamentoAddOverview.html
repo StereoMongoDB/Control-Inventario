@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Grupo</title>
+    <link rel="stylesheet" href="../../../www/public/css/index.css">
+    <link rel="stylesheet" href="../../../public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/css/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="../../../public/js/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/css/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/js/sessionhandler.js"></script>
+</head>
+<body class="groupsRegister">
+    <div class="phone-container">
+        <div class="container">
+            <h2>Registro de Departamento</h2>
+            <form id="grupoForm">
+                <div class="form-group">
+                    <label for="grupo">Departamento</label>
+                    <input type="text" class="form-control" id="dpto" placeholder="Nombre del Departamento">
+                </div>
+                <br>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="postDpto()">Registrar</button>
+                    <a href="../../../admin.html" class="btn btn-danger">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="../../../controllers/routes.js"></script>
+    <script src="../../../public/js/index.js"></script>
+    <script src="../../../cordova.js"></script>
+</body>
+</html>

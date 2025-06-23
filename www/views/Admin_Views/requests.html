@@ -1,0 +1,90 @@
+<div class="main-content">
+  <div class="header">
+    <h1>Solicitudes</h1>
+    <div class="search-form">
+      <input type="text" id="searchInput" placeholder="Buscar Solicitudes">
+    </div>
+    <button id="recent-tools-button" onclick="graficaherramientas()">Solicitudes Recientes</button>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th class="text-center">Nombre</th>
+          <th class="text-center">Fecha</th>
+          <th class="text-center">Carrera</th>
+          <th class="text-center">Taller</th>
+          <th class="text-center">Grupo</th>
+          <th class="text-center">Cantidad</th>
+          <th class="text-center">Fecha de Cumplimiento</th>
+          <th class="text-center">Entregado?</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="requests-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+  <!-- Modal -->
+  <div id="toolsModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="partialViewContent"></div>
+    </div>
+  </div>
+
+<style>
+/* Estilo del botón */
+#recent-tools-button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Estilo de la ventana modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 800px; /* Ajusta el ancho máximo del modal */
+  position: relative;
+}
+
+/* Estilo del botón de cierre */
+.close {
+  color: #aaa;
+  position: absolute;
+  top: 20px; /* Ajusta la posición vertical según el título */
+  right: 20px; /* Ajusta la posición horizontal para estar en la esquina */
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+</style>

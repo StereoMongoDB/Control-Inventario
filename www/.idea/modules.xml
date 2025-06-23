@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/public/js/cordova-plugin-local-notification/cordova-plugin-local-notification.iml" filepath="$PROJECT_DIR$/public/js/cordova-plugin-local-notification/cordova-plugin-local-notification.iml" />
+      <module fileurl="file://$PROJECT_DIR$/public/js/cordova-plugin-local-notifications/cordova-plugin-local-notifications.iml" filepath="$PROJECT_DIR$/public/js/cordova-plugin-local-notifications/cordova-plugin-local-notifications.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/www.iml" filepath="$PROJECT_DIR$/.idea/www.iml" />
+    </modules>
+  </component>
+</project>

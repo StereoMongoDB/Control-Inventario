@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Bienvenida</title>
+    <link rel="stylesheet" href="public/css/index.css">
+</head>
+<body class="index">
+    <img src="public/img/logo.png" alt="Logo de la Compañía">
+    <div class="title-container">
+        <h1 id="title-1">Hola</h1>
+        <h1 id="title-2" class="subtitle">Por favor inicia sesión</h1>
+    </div>
+    <div class="btn-container">
+        <button class="btn" onclick="window.location.href='log.html'"><i class="animation"></i>Iniciar Sesión<i class="animation"></i></button>
+    </div>
+    <script>
+        const title1 = document.getElementById('title-1');
+        const title2 = document.getElementById('title-2');
+
+        setInterval(() => {
+            if (title1.textContent === "Hola") {
+                title1.textContent = "Hello";
+                title2.textContent = "Please Sign Up";
+            } else {
+                title1.textContent = "Hola";
+                title2.textContent = "Por favor inicia sesión";
+            }
+        }, 6000);
+    </script>
+    <script src="cordova.js"></script>
+</body>
+</html>

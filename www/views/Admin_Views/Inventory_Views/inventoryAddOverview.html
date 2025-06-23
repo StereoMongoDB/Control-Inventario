@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Inventario</title>
+    <link rel="stylesheet" href="../../../public/css/index.css">
+    <link rel="stylesheet" href="../../../public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/css/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="../../../public/js/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/css/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/js/sessionhandler.js"></script>
+</head>
+<body class="inventoryRegister">
+    <div class="phone-container">
+        <div class="container">
+            <h2>Formulario de Inventario</h2>
+            <form id="materialForm">
+                <div class="form-group">
+                    <label for="area">Área</label>
+                    <select class="form-control" id="area"></select>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre">
+                </div>
+                <div class="form-group">
+                    <label for="modelo">Modelo</label>
+                    <input type="text" class="form-control" id="modelo">
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea class="form-control" id="descripcion" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="marca">Marca</label>
+                    <select class="form-control" id="marca"></select>
+                </div>
+                <div class="form-group">
+                    <label for="codigo_inventario">Código de Inventario</label>
+                    <input type="text" class="form-control" id="codigo_inventario">
+                </div>
+                <div class="form-group">
+                    <label for="numero_serie">Número de Serie</label>
+                    <input type="text" class="form-control" id="numero_serie">
+                </div>
+                <div class="form-group">
+                    <label for="cantidad_existencia">Cantidad en Existencia</label>
+                    <input type="number" class="form-control" id="cantidad_existencia">
+                </div>
+                <div class="form-group">
+                    <label for="ubicacion">Ubicación</label>
+                    <input type="text" class="form-control" id="ubicacion">
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Imagen</label>
+                    <input type="file" class="form-control-file" id="imagen">
+                    <input type="hidden" id="imagen_id" value="0">
+                    <small id="imagenHelp" class="form-text text-muted"></small>
+                    <div class="mt-2">
+                        <img src="#" alt="Vista previa de la imagen" id="imagenPreview" style="max-width: 200px; max-height: 200px;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="actualizacion">Actualización</label>
+                    <select class="form-control" id="actualizacion"></select>
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <select class="form-control" id="estado"></select>
+                </div>
+                <div class="btn-container">
+                    <button type="button" class="btn btn-primary" onclick="submitForm()">Enviar</button>
+                    <a href="../../../admin.html" class="btn btn-danger">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="../../../public/css/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="../../../public/js/index.js"></script>
+    <script src="../../../controllers/routes.js"></script>
+    <script>
+
+function loadActualizaciones() {
+    $.ajax({
+        url: 'https://vaelsaki.bsite.net/api/actualizaciones',
+        type: 'GET',
+        success: function(data) {
+            const select = $('#actualizacion');
+            select.empty();
+            data.forEach(actualizacion => {
+                select.append(new Option(actualizacion.elaborado_por, actualizacion.Id_Actualizacion));
+            });
+        },
+        error: function(xhr, status, error) {
+            alert('Error al cargar las actualizaciones: ' + xhr.responseText);
+        }
+    });
+}
+
+function loadAreas() {
+    $.ajax({
+        url: 'https://vaelsaki.bsite.net/api/AreasConDepartamentos',
+        type: 'GET',
+        success: function(data) {
+            const select = $('#area');
+            select.empty();
+            data.forEach(area => {
+                const displayText = `(${area.DepartamentoNombre}) ${area.area1}`;
+                select.append(new Option(displayText, area.Id_Area));
+            });
+        },
+        error: function(xhr, status, error) {
+            alert('Error al cargar las áreas: ' + xhr.responseText);
+        }
+    });
+}
+
+
+        // Obtener datos para los selects
+        function loadSelectData(url, selectId, valueField, textField) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(data) {
+                    const select = $('#' + selectId);
+                    select.empty();
+                    data.forEach(item => {
+                        select.append(new Option(item[textField], item[valueField]));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    alert('Error al cargar los datos: ' + xhr.responseText);
+                }
+            });
+        }
+
+        // Llamar a las funciones de carga de datos
+        $(document).ready(function() {
+            loadAreas();
+            loadSelectData(ObtenerMarcas_route, 'marca', 'Id_Marca', 'marca1');
+            loadSelectData(ObtenerEstados_route, 'estado', 'Id_Estado', 'estado1');
+            loadActualizaciones();
+        });
+// Definir la ruta para subir la imagen
+
+// Función para subir imagen y obtener ID
+function uploadImage() {
+    const file = document.getElementById('imagen').files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('Imagen', file);
+
+        $.ajax({
+            url: EnviarImagen_route, // Verifica que esta sea la URL correcta
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response && response.Id_Imagen) {
+                    $('#imagen_id').val(response.Id_Imagen);
+                } else {
+                    alert('Error en la respuesta del servidor: ID de imagen no encontrado.');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error al subir la imagen: ' + xhr.responseText);
+            }
+        });
+    } else {
+        alert('Por favor, selecciona una imagen para subir.');
+    }
+}
+
+// Función para previsualizar la imagen
+function previewImage() {
+    const file = document.getElementById('imagen').files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgPreview = document.getElementById('imagenPreview');
+            imgPreview.setAttribute('src', e.target.result);
+            imgPreview.style.display = 'block'; // Mostrar la previsualización
+        }
+        reader.readAsDataURL(file);
+    } else {
+        alert('Error al cargar la previsualización de la imagen.');
+    }
+}
+
+// Evento de cambio para la imagen
+document.getElementById('imagen').addEventListener('change', function() {
+    previewImage();
+    uploadImage();
+});
+
+        // Enviar formulario
+        function submitForm() {
+            const material = {
+                Area_Id: $('#area').val(),
+                nombre: $('#nombre').val(),
+                modelo: $('#modelo').val(),
+                descripcion: $('#descripcion').val(),
+                Marca_Id: $('#marca').val(),
+                Id_inv: $('#codigo_inventario').val(),
+                num_serie: $('#numero_serie').val(),
+                cantidad_existencia: $('#cantidad_existencia').val(),
+                ubicacion: $('#ubicacion').val(),
+                Imagen_Id: $('#imagen_id').val(),
+                Actualizacion_Id: $('#actualizacion').val(),
+                Estado_Id: $('#estado').val()
+            };
+
+            $.ajax({
+                url: InsertarMaterial_route,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(material),
+                success: function(response) {
+                    alert('Material insertado correctamente');
+                },
+                error: function(xhr, status, error) {
+                    alert('Error al insertar el material: ' + xhr.responseText);
+                }
+            });
+        }
+    </script>
+    <script src="../../../cordova.js"></script>
+
+</body>
+</html>

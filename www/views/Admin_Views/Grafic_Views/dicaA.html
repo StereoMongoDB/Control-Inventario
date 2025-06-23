@@ -1,0 +1,150 @@
+<style>
+  #toolsChart {
+    width: 100%;
+    height: 400px;
+  }
+
+  #applyFilters {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #applyFilters:hover {
+    background-color: #0056b3;
+  }
+
+  .filters {
+    margin-bottom: 20px;
+  }
+
+  .filters label {
+    margin-right: 10px;
+  }
+
+  .day-names {
+    margin-top: 20px;
+    font-weight: bold;
+  }
+
+  .modal-content {
+    position: relative;
+  }
+
+  .close {
+    color: #aaa;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+</style>
+
+<h2>Materiales</h2>
+<div class="filters">
+  <label for="Mats">Materiales: </label>
+  <select name="materiales" id="contadordemats">
+    <option value="">Seleccionar</option>
+  </select>
+  <span id="materialCount">0 materiales</span>
+  <button id="applyFilters">Aplicar Filtros</button>
+</div>
+<canvas id="toolsChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  var allData = [];
+  var chartInstance = null;
+
+  function loadInventoryData() {
+    $.ajax({
+      url: ObtenerDicaA_route,
+      method: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        allData = data;
+        populateMaterialDropdown();
+      },
+      error: function(error) {
+        console.error('Error obteniendo los datos:', error);
+      }
+    });
+  }
+
+  function populateMaterialDropdown() {
+    var estados = [...new Set(allData.map(item => item.Estado))];
+    var dropdown = $('#contadordemats');
+    dropdown.empty();
+    dropdown.append('<option value="">Seleccionar</option>');
+    estados.forEach(function(estado) {
+      dropdown.append(`<option value="${estado}">${estado}</option>`);
+    });
+  }
+
+  function createToolsChart(data) {
+    const canvas = document.getElementById('toolsChart');
+    const ctx = canvas.getContext('2d');
+
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    const chartData = {
+      labels: data.map(item => item.tool),
+      datasets: [{
+        label: 'Cantidad de Materiales',
+        data: data.map(item => item.count),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    };
+
+    var config = {
+      type: 'bar',
+      data: chartData
+    };
+
+    chartInstance = new Chart(ctx, config);
+  }
+
+  function handleDropdownChange() {
+    var selectedEstado = $('#contadordemats').val();
+    if (selectedEstado) {
+      var filteredData = allData.filter(item => item.Estado === selectedEstado);
+      var count = filteredData.length;
+
+      $('#materialCount').text(`${count} materiales`);
+
+      var chartData = [{
+        tool: selectedEstado,
+        count: count
+      }];
+
+      createToolsChart(chartData);
+    } else {
+      $('#materialCount').text('0 materiales');
+      createToolsChart([]);
+    }
+  }
+
+  $(document).ready(function() {
+    loadInventoryData();
+
+    $('#applyFilters').on('click', handleDropdownChange);
+  });
+</script>

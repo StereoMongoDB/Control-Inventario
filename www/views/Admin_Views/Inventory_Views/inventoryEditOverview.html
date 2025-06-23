@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Edición de Inventario</title>
+    <link rel="stylesheet" href="../../../public/css/index.css">
+    <link rel="stylesheet" href="../../../public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/css/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="../../../public/js/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/css/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/js/sessionhandler.js"></script>
+</head>
+<body class="inventoryRegister">
+    <div class="phone-container">
+        <div class="container">
+            <h2>Formulario de Edición de Inventario</h2>
+            <form id="materialForm">
+                <input type="hidden" id="materialId">
+                <div class="form-group">
+                    <label for="area">Área</label>
+                    <select class="form-control" id="area"></select>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="modelo">Modelo</label>
+                    <input type="text" class="form-control" id="modelo" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea class="form-control" id="descripcion" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="marca">Marca</label>
+                    <select class="form-control" id="marca" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="codigo_inventario">Código de Inventario</label>
+                    <input type="text" class="form-control" id="codigo_inventario" required>
+                </div>
+                <div class="form-group">
+                    <label for="numero_serie">Número de Serie</label>
+                    <input type="text" class="form-control" id="numero_serie" required>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad_existencia">Cantidad en Existencia</label>
+                    <input type="number" class="form-control" id="cantidad_existencia" required>
+                </div>
+                <div class="form-group">
+                    <label for="ubicacion">Ubicación</label>
+                    <input type="text" class="form-control" id="ubicacion" required>
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Imagen</label>
+                    <button type="button" class="btn btn-secondary" id="selectImageButton">Seleccionar Imagen Existente</button>
+                    <input type="hidden" id="imagen_id" value="0">
+                    <small id="imagenHelp" class="form-text text-muted">Seleccione una imagen si desea cambiarla.</small>
+                    <div class="mt-2">
+                        <img src="#" alt="Vista previa de la imagen" id="imagenPreview" style="max-width: 200px; max-height: 200px; display: none;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="actualizacion">Actualización</label>
+                    <select class="form-control" id="actualizacion" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <select class="form-control" id="estado" required></select>
+                </div>
+                <div class="btn-container">
+                    <button type="button" class="btn btn-primary" onclick="submitForm()">Actualizar</button>
+                    <a href="../../../admin.html" class="btn btn-danger">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<!-- Modal -->
+<div class="modal fade" id="selectImageModal" tabindex="-1" aria-labelledby="selectImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="selectImageModalLabel">Seleccionar Imagen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="imageGallery" class="row">
+                    <!-- Imágenes serán cargadas aquí -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="../../../public/css/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="cordova.js"></script>
+    <script src="../../../public/js/index.js"></script>
+    <script src="../../../controllers/routes.js"></script>
+    
+    <script>
+$(document).ready(function() {
+    loadSelectOptions().then(() => {
+        cargarDatosDeMaterial();
+    });
+
+    $('#selectImageButton').click(function() {
+        openSelectImageModal();
+    });
+});
+
+
+function openSelectImageModal() {
+    $.ajax({
+        url: 'https://vaelsaki.bsite.net/api/imagenes',
+        method: 'GET',
+        success: function(data) {
+            console.log('Datos recibidos:', data); // Log para ver la estructura de los datos
+            const gallery = $('#imageGallery');
+            gallery.empty(); // Limpiar el contenido del modal
+
+            data.forEach(imagen => {
+                console.log('Imagen:', imagen); // Log para verificar cada imagen
+                const imgElement = $(`<div class="col-4 mb-2">
+                    <img src="data:image/png;base64,${imagen.Imagen}" class="img-thumbnail" alt="Imagen" style="cursor: pointer;" onclick="selectImage(${imagen.Id_Imagen})">
+                </div>`);
+                gallery.append(imgElement);
+            });
+
+            $('#selectImageModal').modal('show'); // Mostrar el modal
+        },
+        error: function(xhr, status, error) {
+            alert('Error al cargar las imágenes: ' + xhr.responseText);
+        }
+    });
+}
+
+function obtenerIdDeMaterialDesdeUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const materialId = urlParams.get('id');
+    console.log('ID de material obtenido desde la URL:', materialId);
+    return materialId;
+}
+
+function cargarDatosDeMaterial() {
+    const materialId = obtenerIdDeMaterialDesdeUrl();
+    if (!materialId) {
+        console.error('ID de material no encontrado en la URL');
+        return;
+    }
+
+    $.ajax({
+        url: `https://vaelsaki.bsite.net/api/materiales/${materialId}`,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data) {
+                console.log('Datos del material:', data);
+                $('#materialId').val(data.Id_Material || materialId);
+                $('#area').val(data.Area_Id || '');
+                $('#nombre').val(data.nombre || '');
+                $('#modelo').val(data.modelo || '');
+                $('#descripcion').val(data.descripcion || '');
+                $('#marca').val(data.Marca_Id || '');
+                $('#codigo_inventario').val(data.Id_inv || '');
+                $('#numero_serie').val(data.num_serie || '');
+                $('#cantidad_existencia').val(data.cantidad_existencia || '');
+                $('#ubicacion').val(data.ubicacion || '');
+                $('#imagen_id').val(data.Imagen_Id || '');
+                $('#actualizacion').val(data.Actualizacion_Id || '');
+                $('#estado').val(data.Estado_Id || '');
+
+                // Previsualización de imagen
+                if (data.Imagen_Id) {
+                    $('#imagenPreview').attr('src', `https://vaelsaki.bsite.net/api/imagenes/${data.Imagen_Id}`);
+                    $('#imagenPreview').show();
+                }
+
+                // Guardar datos del material para preseleccionar después de cargar las opciones
+                window.materialData = data;
+
+                // Preseleccionar después de cargar los datos
+                preselectValues();
+            } else {
+                console.error('No se encontraron datos del material');
+                alert('No se encontraron datos del material');
+            }
+        },
+        error: function(error) {
+            console.error('Error al obtener los datos del material:', error);
+            alert('Error al cargar los datos del material');
+        }
+    });
+}
+
+function preselectValues() {
+    const data = window.materialData;
+    if (data) {
+        console.log('Datos para preselección:', data);
+
+        // Verificar opciones en HTML
+        console.log('Opciones de marca:', $('#marca option'));
+        console.log('Opciones de área:', $('#area option'));
+        console.log('Opciones de estado:', $('#estado option'));
+        console.log('Opciones de actualizacion:', $('#actualizacion option'));
+
+        $('#marca').val(data.Marca_Id);
+        $('#area').val(data.Area_Id);
+        $('#estado').val(data.Estado_Id);
+        $('#actualizacion').val(data.Actualizacion_Id);
+    }
+}
+
+function loadSelectOptions() {
+    return new Promise((resolve, reject) => {
+        loadAreas();
+        loadMarcas();
+        loadEstadoes();
+        loadActualizaciones();
+        resolve();
+    });
+}
+
+function loadAreas() {
+            $.ajax({
+                url: 'https://vaelsaki.bsite.net/api/AreasConDepartamentos',
+                type: 'GET',
+                success: function(data) {
+                    const select = $('#area');
+                    select.empty();
+                    data.forEach(area => {
+                        const displayText = `(${area.DepartamentoNombre}) ${area.area1}`;
+                        select.append(new Option(displayText, area.Id_Area));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    alert('Error al cargar las áreas: ' + xhr.responseText);
+                }
+            });
+        }
+
+function loadMarcas() {
+    $.ajax({
+        url: 'https://vaelsaki.bsite.net/api/marcas',
+        method: 'GET',
+        success: function(data) {
+            const marcaSelect = $('#marca');
+            marcaSelect.empty();
+            data.forEach(marca => {
+                marcaSelect.append(new Option(marca.marca1, marca.Id_Marca));
+            });
+
+            // Llamar a preselectValues después de cargar las opciones
+            preselectValues();
+        },
+        error: function(error) {
+            console.error('Error al cargar las marcas:', error);
+            alert('Error al cargar las marcas');
+        }
+    });
+}
+
+function loadEstadoes() {
+    $.ajax({
+        url: 'https://vaelsaki.bsite.net/api/estadoes',
+        method: 'GET',
+        success: function(data) {
+            const estadoSelect = $('#estado');
+            estadoSelect.empty();
+            data.forEach(estado => {
+                estadoSelect.append(new Option(estado.estado1, estado.Id_Estado));
+            });
+
+            // Llamar a preselectValues después de cargar las opciones
+            preselectValues();
+        },
+        error: function(error) {
+            console.error('Error al cargar los estados:', error);
+            alert('Error al cargar los estados');
+        }
+    });
+}
+
+function loadActualizaciones() {
+    $.ajax({
+        url: 'https://vaelsaki.bsite.net/api/actualizaciones',
+        method: 'GET',
+        success: function(data) {
+            const actualizacionSelect = $('#actualizacion');
+            actualizacionSelect.empty();
+            data.forEach(actualizacion => {
+                actualizacionSelect.append(new Option(actualizacion.fecha + ' - ' + actualizacion.elaborado_por, actualizacion.Id_Actualizacion));
+            });
+
+            preselectValues();
+        },
+        error: function(error) {
+            console.error('Error al cargar las actualizaciones:', error);
+            alert('Error al cargar las actualizaciones');
+        }
+    });
+}
+
+function selectImage(imagenId) {
+    $('#imagen_id').val(imagenId);
+    $('#imagenPreview').attr('src', `https://vaelsaki.bsite.net/api/imagenes/${imagenId}`);
+    $('#imagenPreview').show();
+    $('#selectImageModal').modal('hide');
+}
+
+function submitForm() {
+    const materialId = $('#materialId').val();
+    const formData = {
+        Id_Material: materialId,
+        Area_Id: $('#area').val(),
+        nombre: $('#nombre').val(),
+        modelo: $('#modelo').val(),
+        descripcion: $('#descripcion').val(),
+        Marca_Id: $('#marca').val(),
+        Id_inv: $('#codigo_inventario').val(),
+        num_serie: $('#numero_serie').val(),
+        cantidad_existencia: $('#cantidad_existencia').val(),
+        ubicacion: $('#ubicacion').val(),
+        Imagen_Id: $('#imagen_id').val(),
+        Actualizacion_Id: $('#actualizacion').val(),
+        Estado_Id: $('#estado').val()
+    };
+
+    $.ajax({
+        url: `https://vaelsaki.bsite.net/api/materiales/${materialId}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+            alert('Material actualizado con éxito');
+            window.location.href = '../../../admin.html';
+        },
+        error: function(error) {
+            console.error('Error al actualizar el material:', error);
+            alert('Error al actualizar el material');
+        }
+    });
+}
+    </script>
+        <script src="../../../cordova.js"></script>
+
+</body>
+</html>

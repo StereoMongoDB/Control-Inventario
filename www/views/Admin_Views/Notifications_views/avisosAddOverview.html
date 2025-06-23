@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Aviso</title>
+    <link rel="stylesheet" href="../../../public/css/index.css">
+    <link rel="stylesheet" href="../../../public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/css/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="../../../public/js/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/css/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/js/sessionhandler.js"></script>
+</head>
+<body class="groupsRegister">
+    <div class="phone-container">
+        <div class="container">
+            <h2>Crear Aviso</h2>
+            <form id="avisoForm">
+                <div class="form-group">
+                    <label for="titulo">Título</label>
+                    <input type="text" class="form-control" id="titulo" placeholder="Título del Aviso">
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea class="form-control" id="descripcion" placeholder="Descripción del Aviso"></textarea>
+                </div>                
+                <div class="form-group">
+                    <label for="fecha">Fecha</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" id="fecha" placeholder="Fecha del Aviso">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="usuarios">Seleccionar Usuarios</label>
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#userModal">
+                        Seleccionar Usuarios
+                    </button>
+                        <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="userModalLabel">Seleccionar Usuarios</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <input type="text" id="searchUser" class="form-control" placeholder="Buscar por usuario...">
+                                    </div>
+                                    <div class="text-right mb-2">
+                                        <button type="button" class="btn btn-secondary" onclick="selectAllUsers()">Seleccionar Todos</button>
+                                    </div>
+                                    <!-- Lista de usuarios -->
+                                    <div id="userList" class="list-group">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" onclick="aplicarSeleccion()">Aplicar Selección</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <br>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="postAviso()">Crear</button>
+                    <a href="../../../admin.html" class="btn btn-danger">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="../../../controllers/routes.js"></script>
+    <script src="../../../public/js/index.js"></script>
+    <script>
+            $('#selectAll').click(function() {
+                if ($(this).is(':checked')) {
+                    $('#userList input[type="checkbox"]').prop('checked', true);
+                } else {
+                    $('#userList input[type="checkbox"]').prop('checked', false);
+                }
+            });
+            userlist();
+
+    </script>
+    <script src="../../../cordova.js"></script>
+
+</body>
+</html>

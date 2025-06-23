@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial</title>
+    <link rel="icon" type="image/x-icon" href="../../public/img/logo-icon.ico">
+    <link rel="stylesheet" href="../../public/css/historial.css">
+    <link rel="stylesheet" href="../../public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="../../public/js/jquery/dist/jquery.min.js"></script>
+    <script src="../../public/js/sessionhandler.js"></script>
+</head>
+<style>
+
+    body{
+        overflow: auto;
+        height: auto;
+    }
+    
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: -250px; /* Oculta el sidebar fuera de la pantalla */
+        width: 250px;
+        height: 100%;
+        background-color: #2a3240;
+        transition: left 0.3s ease;
+        overflow-y: auto; /* Agrega desplazamiento vertical */
+    }
+    
+    #sidebar.show {
+        left: 0; /* Muestra el sidebar al desplazarlo a la posición deseada */
+    }
+    
+    #sidebar.hidden {
+        left: -250px; /* Oculta el sidebar fuera de la pantalla */
+    }
+    
+    #sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    #sidebar ul li {
+        margin: 10px 0;
+    }
+    
+    #sidebar ul li a {
+        text-decoration: none;
+    }
+    
+    #sidebar ul li a button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        text-align: left;
+        display: block;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    
+    #sidebar ul li a button.blue-button {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    #sidebar ul li a button.gray-button {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    #sidebar ul li a button.red-button {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    #sidebar ul li a button.orange-button {
+        background-color: #fd7e14;
+        color: white;
+    }
+    
+    #sidebar ul li a button.green-button {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    #sidebar ul li a button:hover {
+        opacity: 0.8;
+    }
+    
+    /* Remove underline and blue border on hover */
+    #sidebar ul li a:hover, #sidebar ul li a:focus {
+        text-decoration: none;
+    }
+    
+    #sidebar ul li a button:focus {
+        outline: none;
+    }
+    
+    /* Estilos para el icono de menú */
+    #menu-icon {
+        font-size: 24px; /* Ajusta el tamaño según sea necesario */
+        cursor: pointer;
+    }
+    
+    /* Estilos para las imágenes de los productos */
+    .products {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .product {
+        display: block;
+        text-align: center;
+        margin: 10px;
+        flex: 1 1 45%;
+    }
+    
+    .product img {
+        width: 100%;
+        max-width: 200px; /* Establece un tamaño máximo para las imágenes */
+        height: auto; /* Mantiene la proporción de la imagen */
+    }
+    
+    .product p {
+        margin-top: 10px;
+    }
+    
+    /* Additional styles for scrolling, search, and pagination */
+    .products-container {
+        overflow-y: auto; /* Adjust as necessary */
+    }
+    
+    .search-container {
+        margin-bottom: 20px;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+    
+    .pagination button {
+        margin: 0 5px;
+        padding: 5px 10px;
+    }
+    
+    /* Media query para pantallas más grandes */
+    @media (min-width: 768px) {
+        .pagination {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+    
+    #searchInput {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    </style>
+<body>
+    <header>
+        <img src="/Control-Inventario-y-prestamo-UTTN/www/public/img/logo.png" alt="Logo">
+        <div class="user-info">
+            <span id="user-name"></span>
+            <span id="menu-icon" onclick="toggleSidebar()">☰</span>
+        </div>
+    </header>
+    
+    <div id="sidebar" class="hidden">
+        <ul>
+            <li id="historialLink" style="display: none;">
+                <a href="/Control-Inventario-y-prestamo-UTTN/www/init.html" onclick="">
+                    <button class="gray-button">Inicio</button>
+                </a>
+            </li>
+            <li><a href="/Control-Inventario-y-prestamo-UTTN/www/views/Apprestamo/notificaciones.html"><button class="orange-button">Avisos</button></a></li>
+            <li id="adminLink" style="display:none;"><a href="/Control-Inventario-y-prestamo-UTTN/www/admin.html"><button class="green-button">Administrador</button></a></li>
+            <li><button class="red-button" onclick="cerrarSesion()">Cerrar sesión</button></li>
+        </ul>
+    </div>
+
+    <main>
+        <h1 class="title">HISTORIAL DE PRÉSTAMOS</h1>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Salida</th>
+                    <th>Entregado</th>
+                </tr>
+            </thead>
+            <tbody id="history-tbody">
+            </tbody>
+        </table>
+    </main>
+    
+    <footer>
+        &copy; 2024 UTTN
+    </footer>
+
+    <script src="../../public/js/index.js"></script>
+    <script>showUser();</script>
+    <script src="../../public/js/historial.js"></script>
+    <script src="../../cordova.js"></script>
+</body>
+</html>

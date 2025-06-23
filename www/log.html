@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="public/css/log.css">
+    <script src="public/js/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/css/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <style>
+            .vh-100 {
+                height: 100vh;
+            }
+            .login-container {
+                max-width: 400px;
+                padding: 2rem;
+                background: #2E8B57;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                border: 10px solid #000000;
+            }
+    
+            .form-control::placeholder { 
+                color: #ffffff; 
+            }
+            @media (max-width: 576px) {
+                .login-container {
+                    padding: 1rem;
+                }
+                .login-container img {
+                    height: 150px;
+                }
+            }
+        </style>
+</head>
+<body>
+    <div class="card-form">
+        <div id="loginView"></div>
+        <div id="registerView"></div>
+    </div>
+    
+    <script src="public/js/index.js"></script>
+    <script src="cordova.js"></script>
+    <script>
+        // Llamada inicial al cargar la página
+        $(document).ready(function() {
+            loadViewPartial('login');
+        });
+
+        // Función para cargar vistas parciales
+        function loadViewPartial(viewName) {
+            $.ajax({
+                url: "views/Apprestamo/" + viewName + ".html",
+                method: "GET",
+                success: function (data) {
+                    if (viewName === 'login') {
+                        $('#loginView').html(data); // Carga el contenido en #loginView
+                        $('#loginView').show(); // Muestra #loginView
+                        $('#registerView').hide(); // Oculta #registerView
+                    } else if (viewName === 'register') {
+                        $('#registerView').html(data); // Carga el contenido en #registerView
+                        $('#registerView').show(); // Muestra #registerView
+                        $('#loginView').hide(); // Oculta #loginView
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al cargar la vista parcial", error);
+                    // En caso de error, carga las vistas alternativas directamente en el JavaScript
+                    if (viewName === 'login') {
+                        $('#loginView').html(''); // Contenido alternativo para login
+                        $('#loginView').show(); // Muestra #loginView
+                        $('#registerView').hide(); // Oculta #registerView
+                    } else if (viewName === 'register') {
+                        $('#registerView').html(''); // Contenido alternativo para registro
+                        $('#registerView').show(); // Muestra #registerView
+                        $('#loginView').hide(); // Oculta #loginView
+                    } else {
+                        $('#loginView').html(''); // Mensaje de vista no encontrada
+                        $('#loginView').show(); // Muestra #loginView
+                        $('#registerView').hide(); // Oculta #registerView
+                    }
+                }
+            });
+        }
+
+        $(document).on('click', '#registerLink', function(event) {
+            event.preventDefault();
+            loadViewPartial('register');
+        });
+
+        $(document).on('click', '#loginLink', function(event) {
+            event.preventDefault();
+            loadViewPartial('login');
+        });
+        $('#loginForm').submit(function(event) {
+            event.preventDefault();
+            console.log("Formulario de inicio de sesión enviado");
+        });
+
+        $('#registerForm').submit(function(event) {
+            event.preventDefault();
+            console.log("Formulario de registro enviado");
+        });
+    </script>
+            <script src="controllers/routes.js"></script>
+</body>
+</html>

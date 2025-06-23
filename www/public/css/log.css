@@ -1,0 +1,60 @@
+body {
+    /* background-image: url('../img/f2.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center; */
+    background-color: #2a3240;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-container {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+}
+.login-container .form-control::placeholder {
+    color: #ffffff;
+}
+.login-container .form-control {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+.login-container label {
+    color: rgb(55, 54, 54);
+}
+.login-container a {
+    color: #ffffff;
+}
+.g-recaptcha {
+    display: flex;
+    justify-content: center;
+}
+
+.reg-container {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+}
+.reg-container .form-control {
+    background-color: #2E8B57;
+}
+.reg-container .form-control::placeholder {
+    color: #000000;
+}
+.reg-container label {
+    color: white;
+}
+.reg-container a {
+    color: #ffffff;
+}
+.error-message {
+    display: none;
+}

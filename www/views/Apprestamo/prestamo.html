@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Préstamo</title>
+    <link rel="stylesheet" href="../../public/css/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/css/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="../../public/js/jquery/dist/jquery.min.js"></script>
+    <script src="../../public/css/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../controllers/routes.js"></script>
+    <script src="../../public/js/sessionhandler.js"></script>
+    <style>
+        body.prep {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            display: grid;
+            place-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .phone-container {
+            background: #FAEBD7;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        .container h2 {
+            color: #000000;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: #ffffff;
+            border-color: #007bff;
+            margin-right: 10px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-danger {
+            background-color: #d9534f;
+            color: #ffffff;
+            border-color: #d9534f;
+        }
+        .btn-danger:hover {
+            background-color: #c9302c;
+            border-color: #c9302c;
+        }
+        .form-control {
+            border: 1px solid #000000;
+            background-color: #ffffff;
+            color: #000000;
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            color: #000000;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .alert {
+            margin-top: 20px;
+        }
+        #alertContainer{
+            color: #000000 !important;
+        }
+    </style>
+</head>
+<body class="prep">
+    <div class="phone-container">
+        <div class="container">
+            <h2>Solicitud de Préstamo</h2>
+            <form id="loanForm">
+                <div class="form-group">
+                    <label for="carrera">Carrera</label>
+                    <select class="form-control" id="carrera" required>
+                        <!-- Opciones se llenarán mediante JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taller">Taller</label>
+                    <input type="text" class="form-control" id="taller" required>
+                </div>
+                <div class="form-group">
+                    <label for="asignatura">Asignatura</label>
+                    <input type="text" class="form-control" id="asignatura" required>
+                </div>
+                <div class="form-group">
+                    <label for="grupo">Grupo</label>
+                    <select class="form-control" id="grupo" required>
+                        <!-- Opciones se llenarán mediante JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" value="1" readonly required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion_compromiso">Descripción del Compromiso</label>
+                    <textarea class="form-control" id="descripcion_compromiso" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_cumplimiento">Fecha de Cumplimiento</label>
+                    <input type="date" class="form-control" id="fecha_cumplimiento" required>
+                </div>
+                <div class="btn-container">
+                    <button type="submit" class="btn btn-primary">Solicitar</button>
+                    <button type="button" class="btn btn-danger" onclick="window.location.href='../../init.html'">Volver</button>
+                </div>
+                <div id="alertContainer" class="alert" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            const requestId = getRequestIdFromUrl();
+            const session = sessionStorage.getItem('usuario');
+            const usuario = JSON.parse(session);
+            const Id_Usuario = usuario.Id_Usuario;
+            const nombreCompleto = `${usuario.nombre} ${usuario.apellido}`; 
+            const coordinadorFirmaValor = 'Doctora. Celia Velarde Gaytan'; 
+
+            if (requestId) {
+                fetchOptions();
+
+                $('#loanForm').on('submit', function(event) {
+                    event.preventDefault(); // Evita el comportamiento por defecto del formulario
+
+                    // Verificar el estado del producto
+                    $.ajax({
+                        url: `https://vaelsaki.bsite.net/api/materiales/${requestId}`,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data && data.Estado_Id === 1) {
+                                // El estado es 1, continuar con la solicitud
+                                const formData = {
+                                    Usuario_Id: Id_Usuario,
+                                    Carrera: $('#carrera').val(),
+                                    Taller: $('#taller').val(),
+                                    nom_asignatura: $('#asignatura').val(),
+                                    Grupo_Id: $('#grupo').val(),
+                                    cantidad: $('#cantidad').val(), // Siempre será 1
+                                    descripcion_compromiso: $('#descripcion_compromiso').val(),
+                                    fecha_cumplimiento: $('#fecha_cumplimiento').val(),
+                                    recibo_conformidad: nombreCompleto, // Valor combinado del nombre y apellido
+                                    coordinador_firma: coordinadorFirmaValor
+                                };
+
+                                // Hacer POST con los datos del formulario
+                                $.ajax({
+                                    url: 'https://vaelsaki.bsite.net/api/Sol_materiales/InsertarSolicitud',
+                                    method: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(formData),
+                                    success: function(response) {
+                                        alert('Solicitud enviada correctamente');
+                                        console.log('Respuesta del servidor:', response);
+
+                                        // Marcar el producto como en préstamo
+                                        $.ajax({
+                                            url: `https://vaelsaki.bsite.net/api/materiales/MarcarComoEnPrestamo/${requestId}`,
+                                            method: 'PUT',
+                                            success: function() {
+                                                alert('Producto marcado como en préstamo');
+                                                console.log('Producto marcado como en préstamo');
+                                            },
+                                            error: function(error) {
+                                                console.error('Error al marcar el producto como en préstamo:', error);
+                                                alert('Error al marcar el producto como en préstamo');
+                                            }
+                                        });
+                                    },
+                                    error: function(error) {
+                                        console.error('Error al enviar la solicitud:', error);
+                                        alert('Error al enviar la solicitud');
+                                    }
+                                });
+                            } else {
+                                // Mostrar mensaje de error según el estado
+                                let message = 'No se puede realizar la solicitud porque el producto está ';
+                                if (data.Estado_Id === 2) {
+                                    message += 'en mantenimiento.';
+                                } else if (data.Estado_Id === 3) {
+                                    message += 'en préstamo.';
+                                } else {
+                                    message += 'en un estado desconocido.';
+                                }
+                                $('#alertContainer').text(message).show();
+                            }
+                        },
+                        error: function(error) {
+                            console.error('Error al obtener el estado del producto:', error);
+                            $('#alertContainer').text('Error al verificar el estado del producto').show();
+                        }
+                    });
+                });
+            } else {
+                alert('ID de solicitud no proporcionado en la URL');
+            }
+        });
+
+        function getRequestIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('producto');
+        }
+
+        function fetchOptions() {
+            // Fetch Grupos
+            $.ajax({
+                url: 'https://vaelsaki.bsite.net/api/grupos',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data) {
+                        const $grupoSelect = $('#grupo');
+                        $grupoSelect.empty(); // Limpia las opciones anteriores
+                        data.forEach(grupo => {
+                            $grupoSelect.append(`<option value="${grupo.Id_Grupo}">${grupo.nombre}</option>`);
+                        });
+                    } else {
+                        $('#grupo').append('<option value="">No se encontraron grupos</option>');
+                    }
+                },
+                error: function(error) {
+                    console.error('Error al obtener los grupos:', error);
+                    $('#grupo').append('<option value="">Error al cargar los grupos</option>');
+                }
+            });
+
+            // Fetch Carreras
+            $.ajax({
+                url: 'https://vaelsaki.bsite.net/api/departamentoes',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data) {
+                        const $carreraSelect = $('#carrera');
+                        $carreraSelect.empty(); // Limpia las opciones anteriores
+                        data.forEach(carrera => {
+                            $carreraSelect.append(`<option value="${carrera.Departamento1}">${carrera.Departamento1}</option>`);
+                        });
+                    } else {
+                        $('#carrera').append('<option value="">No se encontraron carreras</option>');
+                    }
+                },
+                error: function(error) {
+                    console.error('Error al obtener las carreras:', error);
+                    $('#carrera').append('<option value="">Error al cargar las carreras</option>');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
